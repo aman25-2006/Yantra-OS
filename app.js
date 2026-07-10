@@ -993,7 +993,7 @@ function renderQualityPage() {
 function renderInventoryPage() {
   return modulePage(
     'Inventory',
-    'Monitor raw materials, finished goods, stock-out dates and AI shortage predictions.',
+    'Monitor raw materials, finished goods, stock-out dates and AI shortage predictions. Prioritize the items that can stop production first.',
     `
       <div class="module-grid two-column-grid">
         <section class="panel-card">
@@ -1013,6 +1013,10 @@ function renderInventoryPage() {
               <tr><td>Lubricant Oil</td><td>Healthy</td><td><span class="status-pill running">Safe</span></td><td>21 days</td></tr>
             </tbody>
           </table>
+          <div class="brief-grid narrow" style="margin-top:14px;">
+            <div class="brief-item alert"><strong>Reorder now</strong><span>Steel sheets and packaging tape are the first risk.</span></div>
+            <div class="brief-item info"><strong>Protect flow</strong><span>Reserve safety stock for Line C before the next shift.</span></div>
+          </div>
         </section>
         <aside class="stack">
           <section class="panel-card chart-card">
@@ -1036,7 +1040,7 @@ function renderInventoryPage() {
 function renderWarehousePage() {
   return modulePage(
     'Warehouse',
-    'Visualize storage zones, loading docks, inbound flow and outbound readiness.',
+    'Visualize storage zones, loading docks, inbound flow and outbound readiness. Use the layout to clear bottlenecks before dispatch windows.',
     `
       <div class="module-grid two-column-grid">
         <section class="panel-card">
@@ -1054,6 +1058,10 @@ function renderWarehousePage() {
             <div class="brief-item warn"><strong>Packing area</strong><span>Busy during the current shift</span></div>
             <div class="brief-item info"><strong>Pickup readiness</strong><span>Outbound is on time</span></div>
             <div class="brief-item alert"><strong>Slow-moving stock</strong><span>Some material should be reclassified</span></div>
+          </div>
+          <div class="hero-cta-card" style="margin-top:14px;">
+            <span>Warehouse action</span>
+            <strong>Clear staging space before the next pickup and move slow stock out of the main path.</strong>
           </div>
         </section>
         <aside class="stack">
@@ -1074,7 +1082,7 @@ function renderWarehousePage() {
 function renderOrdersPage() {
   return modulePage(
     'Orders',
-    'Follow customer orders, dispatch timing and delivery probability.',
+    'Follow customer orders, dispatch timing and delivery probability. Focus on the orders that affect today’s dispatch queue.',
     `
       <div class="module-grid two-column-grid">
         <section class="panel-card">
@@ -1083,6 +1091,10 @@ function renderOrdersPage() {
             <div class="order-card"><strong>ORD-1842</strong><span>Automotive component order · Dispatch today 6:30 PM</span><em>96% on-time probability</em></div>
             <div class="order-card"><strong>ORD-1901</strong><span>Electrical assembly order · Ready tomorrow morning</span><em>94% on-time probability</em></div>
             <div class="order-card"><strong>ORD-1930</strong><span>Prototype batch · Engineering sign-off pending</span><em>98% on-time probability</em></div>
+          </div>
+          <div class="brief-grid narrow" style="margin-top:14px;">
+            <div class="brief-item good"><strong>High confidence</strong><span>All three orders are close to dispatch readiness.</span></div>
+            <div class="brief-item warn"><strong>Watch one batch</strong><span>Prototype sign-off is the only waiting step.</span></div>
           </div>
         </section>
         <aside class="stack">
@@ -1107,7 +1119,7 @@ function renderOrdersPage() {
 function renderSupplyChainPage() {
   return modulePage(
     'Supply Chain',
-    'Supplier scorecards, lead times, risk signals and procurement visibility.',
+    'Supplier scorecards, lead times, risk signals and procurement visibility. Use it to avoid material delays before they hit production.',
     `
       <div class="module-grid two-column-grid">
         <section class="panel-card">
@@ -1117,6 +1129,10 @@ function renderSupplyChainPage() {
             <div class="supplier-card"><strong>Delta Packaging</strong><span>Lead time 4 days · Score 94</span></div>
             <div class="supplier-card"><strong>Apex Logistics</strong><span>Lead time 2 days · Score 95</span></div>
             <div class="supplier-card"><strong>Prime Electronics</strong><span>Lead time 5 days · Score 91</span></div>
+          </div>
+          <div class="brief-grid narrow" style="margin-top:14px;">
+            <div class="brief-item good"><strong>Preferred vendor</strong><span>Orion Metals is the safest source this week.</span></div>
+            <div class="brief-item alert"><strong>Risk watch</strong><span>Keep alternate carriers warm for urgent shipments.</span></div>
           </div>
         </section>
         <aside class="stack">
@@ -1252,7 +1268,7 @@ function renderAnalyticsPage() {
 function renderReportsPage() {
   return modulePage(
     'Reports',
-    'Generate downloadable daily, weekly and monthly reports, including AI executive summaries.',
+    'Generate downloadable daily, weekly and monthly reports, including AI executive summaries. Everything here should feel board-ready in one click.',
     `
       <div class="report-grid">
         ${reportCards.map((card) => `
@@ -1266,6 +1282,15 @@ function renderReportsPage() {
             </div>
           </article>`).join('')}
       </div>
+      <div class="panel-card" style="margin-top:16px;">
+        <div class="section-head"><div><h3>Executive Brief</h3><p>Top-line summary for management</p></div></div>
+        <div class="brief-grid narrow">
+          <div class="brief-item good"><strong>Operations are stable</strong><span>Production, quality and energy are moving in the right direction.</span></div>
+          <div class="brief-item warn"><strong>Maintenance needs attention</strong><span>MX-07 remains the main risk for the next 72 hours.</span></div>
+          <div class="brief-item info"><strong>Cost control opportunity</strong><span>Energy and changeover savings are the quickest wins.</span></div>
+          <div class="brief-item alert"><strong>Action required</strong><span>Export the report pack before the next review meeting.</span></div>
+        </div>
+      </div>
     `
   );
 }
@@ -1273,7 +1298,7 @@ function renderReportsPage() {
 function renderCompliancePage() {
   return modulePage(
     'Compliance',
-    'Track licenses, audits, labour rules, deployment posture and role-based access control.',
+    'Track licenses, audits, labour rules, deployment posture and role-based access control. Keep audit readiness visible instead of buried in admin settings.',
     `
       <div class="module-grid two-column-grid">
         <section class="panel-card">
@@ -1307,7 +1332,7 @@ function renderCompliancePage() {
 function renderSettingsPage() {
   return modulePage(
     'Settings',
-    'Manage factory profile, users, notifications, appearance, security and integrations.',
+    'Manage factory profile, users, notifications, appearance, security and integrations. This should read like an admin control room, not a generic settings page.',
     `
       <div class="module-grid two-column-grid">
         <section class="panel-card">
@@ -1326,6 +1351,10 @@ function renderSettingsPage() {
             <div class="section-head"><div><h3>Deployment Readiness</h3><p>Built for cloud or local factory hosting</p></div></div>
             <div class="deployment-grid">
               ${deploymentOptions.map(([title, text]) => `<div class="deployment-card"><strong>${title}</strong><span>${text}</span></div>`).join('')}
+            </div>
+            <div class="hero-cta-card" style="margin-top:14px;">
+              <span>System status</span>
+              <strong>Ready for multi-site rollout with cloud, on-premise, and role-based access controls.</strong>
             </div>
           </section>
           <section class="panel-card">
