@@ -12,7 +12,7 @@ const state = {
   copilotMessages: [
     {
       role: 'assistant',
-      text: 'I am connected to production, machines, energy, inventory, quality and safety. Ask me a factory question and I will turn it into a recommendation.',
+      text: 'I am connected to production, machines, energy, inventory, quality and safety. Ask me a factory question and I will turn raw signals into a clear action plan.',
     },
   ],
 };
@@ -393,21 +393,21 @@ function renderLogin() {
           </div>
         </div>
         <div class="login-copy">
-          <div class="eyebrow">Industry 4.0 command center</div>
-          <h1>The operating system for intelligent factories.</h1>
-          <p>Yantra OS unifies machines, IoT sensors, PLCs, cameras, ERP, inventory, maintenance, quality, energy and workforce intelligence into one premium enterprise platform.</p>
+          <div class="eyebrow">Judge-ready industrial command center</div>
+          <h1>Built for factories that need decisions, not dashboards.</h1>
+          <p>Yantra OS unifies production, machine health, quality, energy, inventory, maintenance and workforce intelligence into one decision layer for manufacturing teams.</p>
         </div>
         <div class="login-metrics">
-          <div class="stat-chip"><strong>94%</strong><span>Factory health visibility</span></div>
-          <div class="stat-chip"><strong>72 hrs</strong><span>Predictive maintenance lead time</span></div>
-          <div class="stat-chip"><strong>₹24.8L</strong><span>Estimated monthly revenue impact</span></div>
+          <div class="stat-chip"><strong>94%</strong><span>Factory-wide visibility</span></div>
+          <div class="stat-chip"><strong>72 hrs</strong><span>Predictive lead time</span></div>
+          <div class="stat-chip"><strong>₹24.8L</strong><span>Monthly impact estimate</span></div>
         </div>
       </div>
       <div class="login-panel">
         <div class="login-card glass-card">
           <div class="login-badge"><i data-lucide="shield-check"></i> Secure enterprise access</div>
           <h2>Welcome to Yantra OS</h2>
-          <p>Sign in to the smart factory brain. Demo credentials are prefilled for the live prototype.</p>
+          <p>Sign in to the smart factory brain. Demo credentials are prefilled so the prototype opens directly into the operational view.</p>
           <form id="loginForm" class="login-form">
             <label>
               <span>Email</span>
@@ -424,8 +424,8 @@ function renderLogin() {
             <button class="primary-btn login-submit" type="submit">Enter Yantra OS</button>
           </form>
           <div class="login-footer">
-            <span>Cloud SaaS + On-premise ready</span>
-            <span>Fortune 500-style manufacturing UX</span>
+            <span>Cloud SaaS + on-premise ready</span>
+            <span>Built for MSME and enterprise factories</span>
           </div>
         </div>
       </div>
@@ -514,8 +514,8 @@ function renderDashboardPage() {
       <div class="hero hero-dashboard">
         <div class="hero-copy">
           <div class="eyebrow">Factory intelligence at a glance</div>
-          <h1>Yantra OS is the brain of the smart factory.</h1>
-          <p>Continuous AI orchestration across production, machines, inventory, energy, safety and quality. Designed for manufacturing teams that need decision support, not just dashboards.</p>
+          <h1>The smart factory operating system for daily decisions.</h1>
+          <p>Yantra OS unifies live plant data into one command center so factory owners and operations teams can detect risk, prioritize action and improve throughput faster.</p>
           <div class="hero-actions">
             ${actionButton('Ask Copilot', 'Why did production decrease today?', true)}
             ${actionButton('Generate report', "Generate today's production report.")}
@@ -525,13 +525,18 @@ function renderDashboardPage() {
         <div class="hero-aside glass-card">
           <div class="hero-status">
             <span class="status-dot good"></span>
-            <span>Factory health 94% · Excellent performance</span>
+            <span>Factory health 94% · Decision-ready performance</span>
           </div>
           <div class="hero-tiles">
             <div><strong>31</strong><span>Connected assets</span></div>
             <div><strong>12</strong><span>Production orders</span></div>
             <div><strong>3</strong><span>Maintenance due</span></div>
             <div><strong>5</strong><span>Active alerts</span></div>
+          </div>
+          <div class="brief-grid narrow">
+            <div class="brief-item good"><strong>Unified operations</strong><span>Production, quality, energy and inventory in one view.</span></div>
+            <div class="brief-item warn"><strong>Actionable alerts</strong><span>Every risk is paired with a next step.</span></div>
+            <div class="brief-item info"><strong>Flexible deployment</strong><span>Cloud SaaS or on-premise for factory networks.</span></div>
           </div>
           <div class="hero-cta-card">
             <span>Executive summary</span>
@@ -750,6 +755,7 @@ function renderCopilotPage() {
             <div class="capability-list">
               <div class="capability"><strong>Predict failures</strong><span>Spot risky machines before breakdowns happen.</span></div>
               <div class="capability"><strong>Explain trends</strong><span>Translate charts into simple operational language.</span></div>
+              <div class="capability"><strong>Recommend actions</strong><span>Turn alerts into priority steps for the team.</span></div>
               <div class="capability"><strong>Generate reports</strong><span>Draft production, energy, maintenance and AI summaries.</span></div>
             </div>
           </section>
