@@ -22,9 +22,14 @@ import {
   Play, 
   Sliders, 
   AlertCircle,
-  Maximize2
+  Maximize2,
+  Download,
+  RotateCcw,
+  Flame,
+  Check
 } from 'lucide-react';
 import { formatMetric, getIsoVibrationZone } from '@/lib/utils';
+import { telemetrySimulator } from '@/lib/telemetry-simulator';
 
 interface RealtimeTelemetryChartProps {
   machine: Machine;
@@ -41,6 +46,7 @@ export function RealtimeTelemetryChart({
   const [isPaused, setIsPaused] = useState(false);
   const [frozenData, setFrozenData] = useState<SensorTelemetry[]>([]);
   const [windowSize, setWindowSize] = useState<number>(30); // number of data points to display
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Handle stream freeze/unfreeze
   const togglePause = () => {
@@ -48,6 +54,47 @@ export function RealtimeTelemetryChart({
       setFrozenData([...telemetryStream]);
     }
     setIsPaused(!isPaused);
+  };
+
+  const handleExportCsv = () => {
+    const headers = ['Timestamp', 'MachineCode', 'VibrationRMS_mm_s', 'VibrationPeak_mm_s', 'CrestFactor', 'Temperature_C', 'Current_Amps', 'Pressure_Bar', 'Noise_dB'];
+    const rows = telemetryStream.map(t => {
+      const cf = t.vibrationRms > 0 ? (t.vibrationPeak / t.vibrationRms).toFixed(2) : '1.0';
+      return [
+        `"${t.timestamp}"`,
+        machine.code,
+        t.vibrationRms,
+        t.vibrationPeak,
+        cf,
+        t.temperatureCelsius,
+        t.currentAmps,
+        t.pressureBar ?? '',
+        t.noiseDb ?? ''
+      ].join(',');
+    });
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `${machine.code}_telemetry_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setToastMessage(`Exported ${telemetryStream.length} telemetry records for ${machine.code}`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleInjectFaultOnMachine = () => {
+    const faultType = metricMode === 'temperature' ? 'THERMAL_RUNAWAY' : 'VIBRATION_SPIKE';
+    telemetrySimulator.injectFault(machine.id, faultType);
+    setToastMessage(`Injected ${faultType} on ${machine.code}! Alert triggered.`);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleResetThisMachine = () => {
+    telemetrySimulator.resetMachine(machine.id);
+    setToastMessage(`Reset ${machine.code} back to nominal ISO Zone A/B condition.`);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   const chartData = useMemo(() => {
@@ -152,10 +199,51 @@ export function RealtimeTelemetryChart({
             }`}
           >
             {isPaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
-            <span>{isPaused ? 'Resume Stream' : 'Freeze Stream'}</span>
+            <span>{isPaused ? 'Resume' : 'Freeze'}</span>
+          </button>
+
+          {/* Export CSV Button */}
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-1.5 rounded-lg border border-industrial-700 bg-industrial-800 px-3 py-1 text-xs font-medium text-industrial-200 hover:border-cyan-500 hover:text-white transition-colors"
+            title="Export real-time sliding telemetry data to CSV file"
+          >
+            <Download className="h-3.5 w-3.5 text-cyan-400" />
+            <span>CSV</span>
+          </button>
+
+          {/* In-Chart Machine Fault Trigger */}
+          <button
+            onClick={handleInjectFaultOnMachine}
+            className="flex items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-300 hover:bg-amber-500/20 transition-colors"
+            title="Inject an abnormal excursion specifically onto this machine"
+          >
+            <Flame className="h-3.5 w-3.5 text-amber-400" />
+            <span>Trip Fault</span>
+          </button>
+
+          {/* Reset Machine Condition */}
+          <button
+            onClick={handleResetThisMachine}
+            className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20 transition-colors"
+            title="Reset this machine to nominal baseline"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Reset</span>
           </button>
         </div>
       </div>
+
+      {/* Interactive Action Toast Notification */}
+      {toastMessage && (
+        <div className="mt-3 flex items-center justify-between rounded-lg border border-cyan-500/40 bg-cyan-950/60 px-3.5 py-2 text-xs font-mono text-cyan-300 animate-in fade-in duration-200">
+          <div className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-emerald-400" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-industrial-400 hover:text-white">✕</button>
+        </div>
+      )}
 
       {/* Physics Metric HUD Strip */}
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">

@@ -13,7 +13,10 @@ import {
   X,
   ChevronRight,
   ShieldCheck,
-  Cpu
+  Cpu,
+  Copy,
+  RotateCcw,
+  Check
 } from 'lucide-react';
 import { CopilotMessage, Machine, Anomaly } from '@/types/industrial';
 import { generateLocalCopilotResponse, CopilotContextPayload } from '@/lib/copilot-knowledge';
@@ -25,6 +28,7 @@ interface IndustrialCopilotChatProps {
   onSelectMachine?: (machineId: string) => void;
   isDrawer?: boolean;
   onClose?: () => void;
+  initialQuery?: string;
 }
 
 const DEFAULT_PROMPTS = [
@@ -40,6 +44,7 @@ export function IndustrialCopilotChat({
   onSelectMachine,
   isDrawer = false,
   onClose,
+  initialQuery,
 }: IndustrialCopilotChatProps) {
   const [messages, setMessages] = useState<CopilotMessage[]>([
     {
@@ -56,6 +61,7 @@ I continuously monitor vibration velocity (ISO 10816), thermal gradients, motor 
 
   const [inputQuery, setInputQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -65,6 +71,12 @@ I continuously monitor vibration velocity (ISO 10816), thermal gradients, motor 
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (initialQuery) {
+      handleSendMessage(initialQuery);
+    }
+  }, [initialQuery]);
 
   const handleSendMessage = async (text: string) => {
     const trimmed = text.trim();
@@ -189,10 +201,43 @@ I continuously monitor vibration velocity (ISO 10816), thermal gradients, motor 
         </div>
 
         <div className="flex items-center gap-1">
+          {/* Reset Chat Button */}
+          <button
+            onClick={() => {
+              setMessages([
+                {
+                  id: 'welcome',
+                  role: 'assistant',
+                  content: `Hello! I am your **YantraOS Industrial Copilot**. I am connected to the live telemetry stream of your Pune plant.\n\n**How can I assist your maintenance shift right now?** Click one of the quick queries below or ask me anything.`,
+                  timestamp: new Date().toISOString(),
+                }
+              ]);
+            }}
+            className="rounded-lg p-1.5 text-industrial-400 hover:bg-industrial-800 hover:text-white transition-colors"
+            title="Reset Conversation"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+
+          {/* Copy Transcript Button */}
+          <button
+            onClick={() => {
+              const transcript = messages.map(m => `[${m.role.toUpperCase()} - ${new Date(m.timestamp).toLocaleTimeString()}]:\n${m.content}\n`).join('\n---\n');
+              navigator.clipboard.writeText(transcript);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            className="rounded-lg p-1.5 text-industrial-400 hover:bg-industrial-800 hover:text-white transition-colors"
+            title="Copy Chat Transcript"
+          >
+            {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+          </button>
+
           {isDrawer && onClose && (
             <button
               onClick={onClose}
-              className="rounded-lg p-1.5 text-industrial-400 hover:bg-industrial-800 hover:text-white"
+              className="rounded-lg p-1.5 text-industrial-400 hover:bg-industrial-800 hover:text-white transition-colors"
+              title="Close Drawer"
             >
               <X className="h-4 w-4" />
             </button>

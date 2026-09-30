@@ -469,6 +469,82 @@ class TelemetryEngine {
 
   public acknowledgeAlert(alertId: string) {
     this.alerts = this.alerts.map(a => a.id === alertId ? { ...a, status: 'ACKNOWLEDGED' } : a);
+    this.notifyAlertListeners();
+  }
+
+  public resolveAnomaly(anomalyId: string) {
+    const anom = this.anomalies.find(a => a.id === anomalyId);
+    if (!anom) return;
+
+    this.anomalies = this.anomalies.map(a => a.id === anomalyId ? { ...a, status: 'RESOLVED' } : a);
+    this.alerts = this.alerts.map(a => a.anomalyId === anomalyId ? { ...a, status: 'RESOLVED', resolvedAt: new Date().toISOString() } : a);
+
+    // Reset machine state back to nominal
+    this.resetMachine(anom.machineId);
+    this.notifyAnomalyListeners();
+    this.notifyAlertListeners();
+  }
+
+  public resetMachine(machineId: string) {
+    const idx = this.machines.findIndex(m => m.id === machineId);
+    if (idx === -1) return;
+
+    const machine = this.machines[idx];
+    const nowIso = new Date().toISOString();
+
+    const normalFrame: SensorTelemetry = {
+      id: `norm-${Date.now()}`,
+      machineId,
+      timestamp: nowIso,
+      vibrationRms: 2.15,
+      vibrationPeak: 3.05,
+      temperatureCelsius: 52.0,
+      currentAmps: 22.4,
+      spindleRpm: machine.type.includes('CNC') ? 2400 : undefined,
+      pressureBar: machine.thresholds.pressureMin ? (machine.thresholds.pressureMin + 25) : undefined,
+      noiseDb: 68.0,
+      isAnomaly: false,
+    };
+
+    const history = this.telemetryHistory[machineId] || [];
+    this.telemetryHistory[machineId] = [...history, normalFrame].slice(-60);
+
+    this.machines[idx] = {
+      ...machine,
+      status: 'RUNNING',
+      healthScore: 96.0,
+      lastTelemetry: normalFrame,
+    };
+
+    this.notifyMachineListeners();
+    this.notifyTelemetryListeners();
+  }
+
+  public createWorkOrder(anomalyId: string, technician: string, notes?: string) {
+    this.alerts = this.alerts.map(a => {
+      if (a.anomalyId === anomalyId || a.id === anomalyId) {
+        return {
+          ...a,
+          status: 'IN_PROGRESS',
+          assignedTechnician: technician,
+          rootCause: notes ? `${a.rootCause} | Technician Notes: ${notes}` : a.rootCause,
+        };
+      }
+      return a;
+    });
+    this.notifyAlertListeners();
+  }
+
+  private alertListeners: Set<(alerts: Alert[]) => void> = new Set();
+
+  public onAlerts(listener: (alerts: Alert[]) => void): () => void {
+    this.alertListeners.add(listener);
+    listener(this.alerts);
+    return () => this.alertListeners.delete(listener);
+  }
+
+  private notifyAlertListeners() {
+    this.alertListeners.forEach(l => l([...this.alerts]));
   }
 
   // Listener subscriptions

@@ -27,6 +27,8 @@ export default function DashboardPage() {
   const [selectedMachineId, setSelectedMachineId] = useState<string>(INITIAL_MACHINES[2].id); // HYD-03 by default to highlight critical anomaly
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
   const [isCopilotOpen, setIsCopilotOpen] = useState<boolean>(false);
+  const [copilotInitialQuery, setCopilotInitialQuery] = useState<string | undefined>(undefined);
+  const [selectedFacility, setSelectedFacility] = useState<string>('Pune Precision Works (Bay 1 & 2)');
 
   // Initialize and subscribe to real-time telemetry simulator
   useEffect(() => {
@@ -44,6 +46,10 @@ export default function DashboardPage() {
       setAnomalies(anomList);
     });
 
+    const unsubAlerts = telemetrySimulator.onAlerts((alertList) => {
+      setAlerts(alertList);
+    });
+
     // Initial sync
     setAlerts(telemetrySimulator.getAlerts());
 
@@ -51,12 +57,18 @@ export default function DashboardPage() {
       unsubMachines();
       unsubTelemetry();
       unsubAnomalies();
+      unsubAlerts();
     };
   }, []);
 
   const selectedMachine = machines.find((m) => m.id === selectedMachineId) || machines[0];
   const selectedStream = allTelemetry[selectedMachineId] || [];
   const activeAlertCount = alerts.filter((a) => a.status === 'NEW').length;
+
+  const handleOpenCopilotWithQuery = (query: string) => {
+    setCopilotInitialQuery(query);
+    setIsCopilotOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-industrial-950 flex flex-col font-sans text-slate-100">
@@ -66,6 +78,8 @@ export default function DashboardPage() {
         onOpenAlerts={() => setActiveTab('alerts')}
         onToggleCopilot={() => setIsCopilotOpen(!isCopilotOpen)}
         isCopilotOpen={isCopilotOpen}
+        selectedFacility={selectedFacility}
+        onSelectFacility={setSelectedFacility}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -85,6 +99,8 @@ export default function DashboardPage() {
           <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-industrial-400">
             <div className="flex items-center gap-1.5 font-mono">
               <span className="text-industrial-300">YantraOS Plant Ops</span>
+              <ChevronRight className="h-3 w-3" />
+              <span className="text-industrial-400">{selectedFacility}</span>
               <ChevronRight className="h-3 w-3" />
               <span className="text-cyan-400 font-medium capitalize">
                 {activeTab === 'overview' ? 'Command Center Dashboard' : activeTab}
@@ -108,6 +124,7 @@ export default function DashboardPage() {
                 selectedMachineId={selectedMachineId}
                 onSelectMachine={(id) => setSelectedMachineId(id)}
                 onViewTelemetryTab={() => setActiveTab('telemetry')}
+                onAskCopilot={handleOpenCopilotWithQuery}
               />
 
               {/* Real-time Telemetry Section for Selected Machine */}
@@ -164,15 +181,24 @@ export default function DashboardPage() {
                       </p>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        setSelectedMachineId(anomalies[0].machineId);
-                        setActiveTab('telemetry');
-                      }}
-                      className="shrink-0 rounded-lg border border-cyan-500/40 bg-cyan-950/40 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-900/50"
-                    >
-                      Investigate Stream
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => {
+                          setSelectedMachineId(anomalies[0].machineId);
+                          setActiveTab('telemetry');
+                        }}
+                        className="rounded-lg border border-cyan-500/40 bg-cyan-950/40 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-900/50"
+                      >
+                        Inspect Stream
+                      </button>
+                      <button
+                        onClick={() => handleOpenCopilotWithQuery(`Explain the root cause and recommend immediate maintenance action for the recent anomaly on ${anomalies[0].machineCode}`)}
+                        className="rounded-lg border border-industrial-700 bg-industrial-800 px-3 py-1.5 text-xs font-medium text-industrial-300 hover:text-white flex items-center gap-1"
+                      >
+                        <Bot className="h-3 w-3 text-cyan-400" />
+                        <span>Ask Copilot</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -226,6 +252,7 @@ export default function DashboardPage() {
               <IndustrialCopilotChat
                 machines={machines}
                 anomalies={anomalies}
+                initialQuery={copilotInitialQuery}
                 onSelectMachine={(id) => {
                   setSelectedMachineId(id);
                   setActiveTab('telemetry');
@@ -242,6 +269,7 @@ export default function DashboardPage() {
               machines={machines}
               anomalies={anomalies}
               isDrawer={true}
+              initialQuery={copilotInitialQuery}
               onClose={() => setIsCopilotOpen(false)}
               onSelectMachine={(id) => {
                 setSelectedMachineId(id);
