@@ -1,193 +1,121 @@
-# YantraOS — The AI Operating System for Smart Manufacturing
+# YantraOS — AI Industrial Copilot & Predictive Monitoring Platform
 
-An enterprise-grade AI-powered SaaS frontend prototype designed for Micro, Small, and Medium Enterprises (MSMEs) in the manufacturing sector.
+An enterprise-grade Industrial IoT (IIoT) and Predictive Maintenance platform engineered specifically for manufacturing MSMEs (Micro, Small, and Medium Enterprises). 
 
-## Product Vision
-
-YantraOS transforms raw operational data into intelligent business insights. Factory owners can monitor machine health, track energy consumption, analyze production trends, manage inventory, and receive AI-powered recommendations—all from a single dashboard.
-
-**Core Capabilities:**
-- **AI Copilot** — Natural language assistant for factory queries
-- **Dashboard** — Unified command center with KPIs, alerts, and recommendations
-- **Machine Monitoring** — Real-time status, health scores, and predictive maintenance
-- **Energy Management** — Consumption tracking, cost optimization, and carbon insights
-- **Production Analytics** — Output trends, efficiency metrics, and downtime analysis
-- **Inventory & Orders** — Stock levels, supplier tracking, and delivery predictions
-- **Compliance** — License management, audit trails, and regulatory reminders
-
-## Quick Start
-
-### Running Locally
-1. Clone the repository
-2. Open `index.html` in any modern browser
-3. Use demo credentials:
-   - Email: `owner@yantraos.com`
-   - Password: `yantra123`
-
-### Browser Support
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Responsive design for desktop, tablet, and mobile
-
-## Technology Stack
-
-- **HTML5** — Semantic markup
-- **CSS3** — Modern design with variables, gradients, and animations
-- **Vanilla JavaScript** — No build step required
-- **Chart.js** — Interactive data visualization
-- **Lucide Icons** — Clean, scalable SVG icons
-- **Google Fonts** — Inter typeface for professional appearance
-
-## Architecture
-
-The application is a **single-file frontend** with modular JavaScript:
-
-- `index.html` — Main entry point and shell
-- `styles.css` — Design system and component styles (~1,400 lines)
-- `app.js` — State management, page rendering, and interactions (~1,100 lines)
-
-**No backend, no build tools, no dependencies beyond CDNs.** Deploy directly to GitHub Pages or any static host.
-
-## Features
-
-### Pages & Modules
-1. **Login** — Enterprise authentication interface
-2. **Dashboard** — Factory health, KPIs, AI briefing, alerts, recent activity
-3. **AI Copilot** — Conversational AI assistant with simulated intelligent responses
-4. **Machines** — Fleet monitoring, health scores, utilization tracking
-5. **Production** — Output metrics, efficiency, OEE, downtime analysis
-6. **Energy** — Consumption tracking, peak demand, solar generation, cost savings
-7. **Maintenance** — Risk-based priorities, predictive analytics, health trends
-8. **Inventory** — Stock levels, replenishment alerts, supplier tracking
-9. **Orders** — Active orders, dispatch schedules, delivery forecasting
-10. **Reports** — Production, maintenance, energy, inventory, compliance summaries
-11. **Analytics** — Factory performance trends, carbon footprint, savings analysis
-12. **Compliance** — License management, GST filing, safety certificates, audits
-13. **Settings** — User preferences, theme switching, notification config
-14. **Help Center** — Getting started guides, feature explanations
-
-### Design System
-
-**Color Palette:**
-- Primary: `#1976d2` (Blue)
-- Accent: `#ff8a1e` (Orange)
-- Success: `#11b57c` (Green)
-- Warning: `#f0a000` (Amber)
-- Danger: `#e45757` (Red)
-- Neutral: `#1d2733` (Dark Text) / `#eef2f6` (Light Background)
-
-**Components:**
-- KPI Cards — Animated counters with progress indicators
-- Charts — Line, bar, and doughnut charts powered by Chart.js
-- Status Badges — Color-coded machine states (Running, Maintenance, Idle, Fault)
-- Data Tables — Responsive tables with status indicators
-- Alerts — Priority-based warnings with contextual information
-- AI Messages — Simulated conversational responses with typing animation
-- Navigation — Sticky sidebar with active page highlighting
-
-### Key Interactions
-
-- **Smart Navigation** — Click any sidebar item to navigate instantly
-- **Dark/Light Theme** — Toggle appearance on the fly
-- **AI Assistant** — Ask questions like "Which machine needs maintenance?" and get intelligent responses
-- **Animated Charts** — Data visualizations load with smooth animations
-- **Real-time Counters** — KPI values animate from 0 to target
-- **Responsive Design** — Adapts perfectly from 320px mobile to 2560px ultrawide
-- **Quick Actions** — Buttons throughout allow instant access to common tasks
-
-## Deployment to GitHub Pages
-
-### Step 1: Create a GitHub Repository
-1. Go to [github.com/new](https://github.com/new)
-2. Repository name: `yantraos` (or any name)
-3. Description: "The AI Operating System for Smart Manufacturing"
-4. Choose **Public** (required for free GitHub Pages)
-5. Click "Create repository"
-
-### Step 2: Push Code to GitHub
-```bash
-cd "c:\Users\Aman\Desktop\Yantra OS"
-
-# Add GitHub as remote (replace USERNAME with your GitHub username)
-git remote add origin https://github.com/USERNAME/yantraos.git
-
-# Rename branch to main if needed
-git branch -M main
-
-# Push code
-git push -u origin main
-```
-
-### Step 3: Enable GitHub Pages
-1. Go to your repository on GitHub
-2. Navigate to **Settings** → **Pages**
-3. Under "Source", select:
-   - Branch: **main**
-   - Folder: **/(root)**
-4. Click "Save"
-5. GitHub will provide your live URL: `https://USERNAME.github.io/yantraos`
-
-### Step 4: Access Your Live App
-Wait 1–2 minutes for deployment, then visit your GitHub Pages URL. Your YantraOS dashboard will be live!
-
-## Performance Notes
-
-- **No build step** — Load `index.html` directly
-- **Minimal CDN usage** — Only Chart.js and Lucide Icons
-- **Optimized CSS** — ~35 KB minified
-- **Efficient JavaScript** — ~40 KB minified
-- **Fast interaction** — Vanilla JS, no framework overhead
-- **Mobile-ready** — Fully responsive and touch-friendly
-
-## Future Enhancements
-
-The architecture is designed to integrate:
-- **Real IoT data streams** — Connect actual machine sensors via WebSocket or REST
-- **Backend API** — FastAPI, Django, or Node.js for live analytics
-- **Database** — PostgreSQL or MongoDB for persistent data
-- **User authentication** — JWT tokens, OAuth, or session management
-- **Email/SMS alerts** — Integration with notification services
-- **Export features** — PDF, Excel, and CSV generation with real data
-
-**No redesign necessary** — Simply replace simulated data with live API calls.
-
-## File Structure
-
-```
-yantraos/
-├── index.html          # Main entry point (single shell)
-├── styles.css          # Design system and components
-├── app.js              # State management and UI logic
-├── .gitignore          # Git ignore rules
-├── README.md           # This file
-└── .git/               # Version control
-```
-
-## Demo Data
-
-All charts and alerts use realistic manufacturing metrics:
-- **Production**: 1,540 units/day, 96% on-time delivery
-- **Energy**: 4.8 MWh/day, ₹2,350 monthly savings
-- **Machines**: 28/31 running, 2 in maintenance, 1 idle
-- **Factory Health**: 94% operational efficiency
-- **Alerts**: 5 active items requiring attention
-
-## Keyboard Shortcuts (Future)
-
-Planned for next iteration:
-- `?` — Help menu
-- `Cmd/Ctrl + K` — Quick search
-- `Cmd/Ctrl + /` — Command palette
-
-## License
-
-Built for the **MSME Hackathon 2026**. This prototype demonstrates innovation, scalability, and commercial viability for manufacturing intelligence software.
-
-## Support
-
-For questions or feedback about this prototype, refer to the **Help Center** module inside the app.
+YantraOS turns raw high-frequency sensor telemetry into actionable operational intelligence, physics-informed anomaly detection (ISO 10816 standards), and automated maintenance runbook execution (SOPs) to prevent catastrophic machine breakdowns.
 
 ---
 
-**Made with ❤️ for Indian MSMEs.** YantraOS: Making Industry 4.0 accessible to every factory.
+## 🏭 Core Architecture & Tech Stack
+
+- **Frontend**: Next.js 14 (App Router, TypeScript, React 18, Tailwind CSS, Lucide Icons)
+- **Industrial Data Visualization**: Recharts with real-time sliding windows, dual-axis telemetry streams, and ISO 10816 severity boundary lines
+- **Database & Realtime Pub/Sub**: Supabase (PostgreSQL 15 with BRIN timeseries indexing, Row Level Security, and Realtime websocket publications)
+- **Physics Engine**: ISO 10816-3 Vibration Severity classification (Zone A/B/C/D), Crest Factor peak analysis, and thermal gradient detection
+- **AI Industrial Copilot**: Google Gemini API / OpenAI API integration with domain prompt grounding and offline diagnostic fallback engine
+- **Edge Telemetry Simulator**: In-memory telemetry engine + Python Modbus/OPC UA edge gateway streamer (`workers/edge_gateway.py`)
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Run the Development Server
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 3. Build for Production
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## 🗄️ Supabase Database Migration
+
+The complete PostgreSQL migration script with tables, indices, RLS policies, Realtime publications, and realistic shopfloor seed data is located at:
+`supabase/migrations/20260930000001_yantra_core_schema.sql`
+
+To apply this to your Supabase project:
+1. Open your Supabase Dashboard -> **SQL Editor**.
+2. Paste the contents of `supabase/migrations/20260930000001_yantra_core_schema.sql`.
+3. Click **Run**.
+4. Copy your `Project URL` and `anon key` into `.env.local`:
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+---
+
+## 🤖 AI Copilot Configuration (Gemini or OpenAI)
+
+To enable live LLM generation for the Industrial Copilot:
+Add your API key to `.env.local`:
+```bash
+GEMINI_API_KEY=your_gemini_api_key_here
+# or
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+*(Note: If no API key is provided, YantraOS automatically uses its built-in physics-grounded diagnostic engine to answer questions like "Which machine showed abnormal vibration today?", "Why did Machine 03 trigger a warning at 14:30?", and "What maintenance action should I take next?")*
+
+---
+
+## 📡 Python Edge Telemetry Gateway Simulator
+
+To simulate an edge PLC bridge streaming telemetry via Python:
+```bash
+python workers/edge_gateway.py
+```
+
+---
+
+## 📁 Repository Structure
+
+```text
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── copilot/chat/route.ts  # Grounded AI Copilot API route
+│   │   │   ├── machines/route.ts      # Fleet inventory & metrics API
+│   │   │   └── telemetry/route.ts     # Telemetry ingest & fault injector
+│   │   ├── globals.css                # Industrial theme & custom scrollbars
+│   │   ├── layout.tsx                 # Root layout & dark mode
+│   │   └── page.tsx                   # Master Command Center Dashboard
+│   ├── components/
+│   │   ├── alerts/
+│   │   │   └── AnomalyAlertCenter.tsx # Anomaly log table & SOP recommendations
+│   │   ├── charts/
+│   │   │   └── RealtimeTelemetryChart.tsx # Recharts real-time dual-axis streams
+│   │   ├── copilot/
+│   │   │   └── IndustrialCopilotChat.tsx  # Natural language shopfloor copilot
+│   │   ├── dashboard/
+│   │   │   └── FactoryOverview.tsx    # Executive summary & live machine grid
+│   │   └── layout/
+│   │       ├── Header.tsx             # Plant identity, stream status, fault trigger
+│   │       └── Sidebar.tsx            # Navigation & edge protocol metrics
+│   ├── lib/
+│   │   ├── anomaly-detector.ts        # ISO 10816 physics & thermal heuristics
+│   │   ├── copilot-knowledge.ts       # Domain prompt grounding & diagnostic logic
+│   │   ├── supabase.ts                # Supabase client & fallback wrapper
+│   │   ├── telemetry-simulator.ts     # Multi-machine wave simulator & fault injector
+│   │   └── utils.ts                   # Unit formatters & ISO zone classifiers
+│   └── types/
+│       └── industrial.ts              # Strongly-typed schemas (Machine, Anomaly, etc.)
+├── supabase/
+│   └── migrations/
+│       └── 20260930000001_yantra_core_schema.sql # Production PostgreSQL migration
+├── workers/
+│   └── edge_gateway.py                # Python Modbus/OPC UA edge ingestion streamer
+├── legacy/                            # Preserved static mockup files (HTML/CSS/JS)
+└── package.json
+```
