@@ -16,6 +16,7 @@ import {
   UserCheck,
   ShieldAlert,
   RotateCcw,
+  Layers,
   X
 } from 'lucide-react';
 import { telemetrySimulator } from '@/lib/telemetry-simulator';
@@ -304,6 +305,16 @@ export function Header({
               </div>
             )}
           </div>
+
+          {/* Classic Suite Switcher */}
+          <a
+            href="../"
+            className="flex items-center gap-1.5 rounded-lg border border-industrial-700 bg-industrial-900/90 px-2.5 py-1.5 text-xs font-semibold text-industrial-200 transition-all hover:border-cyan-500 hover:text-white"
+            title="Switch to the 18-Module Classic Factory Prototype"
+          >
+            <Layers className="h-3.5 w-3.5 text-cyan-400" />
+            <span className="hidden sm:inline">Classic Suite (18 Modules)</span>
+          </a>
 
           {/* Industrial Copilot Toggle */}
           <button

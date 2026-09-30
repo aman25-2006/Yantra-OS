@@ -33,13 +33,19 @@ jobs:
       - name: Build Next.js Static Export
         env:
           EXPORT_STATIC: "1"
-          NEXT_PUBLIC_BASE_PATH: "/Yantra-OS"
+          NEXT_PUBLIC_BASE_PATH: "/Yantra-OS/next"
         run: npm run build
+
+      - name: Assemble Combined Production Distribution
+        run: |
+          mkdir -p dist-site/next
+          cp index.html styles.css app.js dist-site/
+          cp -r out/* dist-site/next/
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./dist-site
 
   deploy:
     environment:

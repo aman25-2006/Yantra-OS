@@ -22,6 +22,7 @@ const sidebarItems = [
   { id: 'copilot', label: 'AI Copilot', icon: 'sparkles' },
   { id: 'twin', label: 'Digital Twin', icon: 'layers-3' },
   { id: 'machines', label: 'Machines', icon: 'cpu' },
+  { id: 'telemetry', label: 'IIoT Live Telemetry', icon: 'activity' },
   { id: 'production', label: 'Production', icon: 'factory' },
   { id: 'maintenance', label: 'Maintenance', icon: 'wrench' },
   { id: 'quality', label: 'Quality Inspection', icon: 'scan-search' },
@@ -84,6 +85,9 @@ const alerts = [
 ];
 
 const prompts = [
+  'Which machine showed abnormal vibration today?',
+  'Why did Machine 03 trigger a warning at 14:30?',
+  'What maintenance action should I take next?',
   'Why did production decrease today?',
   'Which machine may fail next?',
   'How can we reduce electricity consumption?',
@@ -95,6 +99,24 @@ const prompts = [
 ];
 
 const aiResponses = {
+  'which machine showed abnormal vibration today?': {
+    summary: 'Critical vibration spike detected on HYD-03 (Hydraulic Stamping Press - 500T). Velocity RMS hit 8.42 mm/s breaching ISO 10816 Zone D (limit: 7.1 mm/s) with crest factor of 4.18.',
+    risk: 94,
+    actions: ['Immediate lockout/tagout of 500T accumulator', 'Inspect drive motor bearing for outer race fluting', 'Check ISO VG 46 oil viscosity and replace bearing assembly'],
+    chart: [2.1, 2.3, 2.4, 3.8, 5.1, 7.2, 8.4],
+  },
+  'why did machine 03 trigger a warning at 14:30?': {
+    summary: 'Machine 03 (HYD-03) experienced severe vibration modulation at 3.2x shaft speed. High crest factor confirms ball bearing impact spalling caused by grease degradation.',
+    risk: 92,
+    actions: ['Shut down pump drive motor', 'Clean magnetic suction filter on oil return line', 'Laser align motor to pump coupling before restart'],
+    chart: [2.2, 2.4, 3.1, 4.6, 6.2, 7.8, 8.4],
+  },
+  'what maintenance action should i take next?': {
+    summary: 'Priority 1: Lock out HYD-03 for bearing replacement. Priority 2: Flush chiller filter on INJ-02 to resolve 73.8°C thermal warning. Priority 3: CNC-01 routine check.',
+    risk: 88,
+    actions: ['Dispatch Ramesh Sharma to Bay 3 (HYD-03)', 'Flush heat exchanger mesh on INJ-02', 'Order SKF 22216-E spherical roller bearing from stores'],
+    chart: [85, 78, 72, 68, 54, 42, 35],
+  },
   'why did production decrease today?': {
     summary: 'Production dipped because Line C lost 42 minutes to a packaging robot fault, while Line D ran slower during a product changeover. Throughput recovered after 11:15.',
     risk: 68,
@@ -146,6 +168,8 @@ const aiResponses = {
 };
 
 const searchIndex = [
+  { label: 'IIoT Live Telemetry', page: 'telemetry', description: 'ISO 10816 real-time vibration & thermal streams' },
+  { label: 'Vibration Analysis', page: 'telemetry', description: 'Class II velocity RMS monitoring' },
   { label: 'MX-07 Press Line', page: 'machines', description: 'Failure probability 64%', machineId: 'MX-07' },
   { label: 'MX-04 Packaging Robot', page: 'machines', description: 'Critical fault state', machineId: 'MX-04' },
   { label: 'Steel Sheets', page: 'inventory', description: 'Low stock item' },
@@ -494,6 +518,7 @@ function renderShell(contentHtml) {
             <div class="search-results" id="searchResults" hidden></div>
           </div>
           <div class="topbar-actions">
+            <a href="./next/" class="btn btn-outline btn-sm" style="display:inline-flex; align-items:center; gap:6px; border-color: #57d7ff; color: #8ff7ff; text-decoration: none; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 600;" title="Switch to Next.js 14 App Router Recharts Engine"><i data-lucide="zap"></i><span>Next.js IIoT Suite</span></a>
             <span class="mode-pill">Cloud SaaS · On-premise</span>
             <button class="icon-btn" aria-label="Notifications"><i data-lucide="bell"></i><span class="badge-dot"></span></button>
             <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"><i data-lucide="moon-star"></i></button>
@@ -1371,6 +1396,136 @@ function renderSettingsPage() {
   );
 }
 
+const telemetryMachines = [
+  { id: 'CNC-01', name: 'CNC Lathe-01 (Heavy Turning)', status: 'RUNNING', vibe: 1.82, temp: 48.2, crest: 2.1, zone: 'Zone A (Good)' },
+  { id: 'INJ-02', name: 'Injection Molder-02 (450T)', status: 'WARNING', vibe: 4.88, temp: 73.8, crest: 3.4, zone: 'Zone C (Alert)' },
+  { id: 'HYD-03', name: 'Hydraulic Press-03 (500T)', status: 'CRITICAL', vibe: 8.42, temp: 64.1, crest: 4.18, zone: 'Zone D (Danger)' },
+];
+
+function renderTelemetryPage() {
+  const activeMach = telemetryMachines.find((m) => m.id === (state.selectedTelemetryMachine || 'HYD-03')) || telemetryMachines[2];
+
+  return modulePage(
+    'IIoT Live Telemetry & ISO 10816 Engine',
+    'Real-time edge sensor telemetry (1.0 Hz) tracking vibration velocity RMS, motor temperature, and ISO 10816-3 Class II zone severity.',
+    `
+      <div class="brief-grid" style="margin-bottom: 20px;">
+        <div class="brief-item info">
+          <strong>3 Connected Edge Gateways</strong>
+          <span>Edge MQTT brokers streaming from Pune, Rajkot, and Bengaluru</span>
+        </div>
+        <div class="brief-item warn">
+          <strong>ISO 10816-3 Standards</strong>
+          <span>Zone C Alert (4.5 mm/s) & Zone D Danger (7.1 mm/s) active</span>
+        </div>
+        <div class="brief-item alert">
+          <strong>Active Hazard: HYD-03</strong>
+          <span>Vibration peak at 8.42 mm/s (Outer race impact defect)</span>
+        </div>
+        <div class="brief-item good">
+          <strong>Sliding Buffer Window</strong>
+          <span>60-point FIFO buffer at 1,000 ms telemetry resolution</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+        ${telemetryMachines
+          .map(
+            (m) => `
+          <button class="tag ${m.id === activeMach.id ? 'active' : ''} telemetry-machine-btn" data-telemetry-machine="${m.id}" style="padding: 8px 14px; font-size: 13px; cursor: pointer; border-radius: 8px; border: 1px solid ${m.id === activeMach.id ? '#57d7ff' : 'rgba(255,255,255,0.1)'}; background: ${m.id === activeMach.id ? 'rgba(87,215,255,0.18)' : 'rgba(255,255,255,0.03)'}; color: ${m.id === activeMach.id ? '#57d7ff' : '#a8bfd7'}; font-weight: 600;">
+            <i data-lucide="cpu" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;"></i> ${m.name} [${m.status}]
+          </button>`
+          )
+          .join('')}
+      </div>
+
+      <div class="chart-grid">
+        <section class="panel-card chart-card">
+          <div class="section-head">
+            <div>
+              <h3>Vibration Velocity RMS (mm/s)</h3>
+              <p>Stream for ${activeMach.name} · ISO Warning: 4.5 mm/s · Danger: 7.1 mm/s</p>
+            </div>
+            <span class="glass-tag" style="color: ${activeMach.vibe >= 7.1 ? '#ff6b8a' : activeMach.vibe >= 4.5 ? '#ffb04d' : '#66e8b4'};">${activeMach.zone}</span>
+          </div>
+          <canvas id="telemetryVibrationChart"></canvas>
+        </section>
+
+        <section class="panel-card chart-card">
+          <div class="section-head">
+            <div>
+              <h3>Motor Casing Temperature (°C)</h3>
+              <p>Stream for ${activeMach.name} · Warning: 70°C · Critical: 85°C</p>
+            </div>
+            <span class="glass-tag" style="color: ${activeMach.temp >= 70 ? '#ffb04d' : '#66e8b4'};">${activeMach.temp}°C Live</span>
+          </div>
+          <canvas id="telemetryTemperatureChart"></canvas>
+        </section>
+      </div>
+
+      <div class="module-grid two-column-grid" style="margin-top: 20px;">
+        <section class="panel-card">
+          <div class="section-head">
+            <div>
+              <h3>Edge Fault Simulator</h3>
+              <p>Inject real-time anomalies to test AI detection and alarm pipelines</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+            <button class="primary-btn telemetry-fault-btn" data-fault="vibe" style="background: rgba(255,107,138,0.2); border: 1px solid #ff6b8a; color: #ff6b8a; cursor: pointer;">
+              <i data-lucide="zap"></i> Inject Vibration Spike (8.8 mm/s)
+            </button>
+            <button class="secondary-btn telemetry-fault-btn" data-fault="temp" style="background: rgba(255,176,77,0.2); border: 1px solid #ffb04d; color: #ffb04d; cursor: pointer;">
+              <i data-lucide="flame"></i> Inject Thermal Surge (82°C)
+            </button>
+            <button class="secondary-btn telemetry-fault-btn" data-fault="reset" style="cursor: pointer;">
+              <i data-lucide="refresh-cw"></i> Reset Telemetry Baseline
+            </button>
+          </div>
+          <div class="capability-list">
+            <div class="capability">
+              <strong>ISO 10816-3 Class II Evaluation</strong>
+              <span>Velocity RMS calculated over 10-1000 Hz bandpass at 1 kHz edge sampling.</span>
+            </div>
+            <div class="capability">
+              <strong>Crest Factor & Kurtosis</strong>
+              <span>Peak-to-RMS acceleration ratio signals early bearing spalling prior to velocity rise.</span>
+            </div>
+            <div class="capability">
+              <strong>Automated Work Order Generation</strong>
+              <span>Zone D breaches trigger automated ERP dispatch to on-duty plant technician.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="section-head">
+            <div>
+              <h3>Live Anomaly Incidents</h3>
+              <p>Edge alarms detected in the last 60 minutes</p>
+            </div>
+          </div>
+          <div class="capability-list">
+            <div class="capability" style="border-left: 3px solid #ff6b8a; padding-left: 10px;">
+              <strong>HYD-03: ISO Zone D Breach (8.42 mm/s)</strong>
+              <span>AI Recommendation: Bearing ball pass frequency outer ring (BPFO) defect detected. Lock out accumulator and replace SKF 22216-E roller bearing.</span>
+            </div>
+            <div class="capability" style="border-left: 3px solid #ffb04d; padding-left: 10px;">
+              <strong>INJ-02: Hydraulic Oil Thermal Alert (73.8°C)</strong>
+              <span>AI Recommendation: Heat exchanger fouled. Inspect oil cooler fan belt tension and flush coolant radiator.</span>
+            </div>
+            <div class="capability" style="border-left: 3px solid #66e8b4; padding-left: 10px;">
+              <strong>CNC-01: Steady State Calibration Complete</strong>
+              <span>Baseline spindle vibration stabilized at 1.82 mm/s (Zone A - Good condition).</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    `,
+    `<a href="./next/" class="primary-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;" title="Open Next.js 14 Recharts Predictive Monitoring Dashboard"><i data-lucide="external-link"></i> Launch Next.js Advanced Mode</a>`
+  );
+}
+
 function getAiAnalysis(question) {
   const query = normalize(question);
   return aiResponses[query] || {
@@ -1657,6 +1812,24 @@ function initCharts(page) {
     createBarChart('analyticsSavingsChart', ['Energy', 'Downtime', 'Waste', 'Labor'], [32, 27, 18, 13], '#66e8b4');
     createLineChart('analyticsForecastChart', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], [1540, 1548, 1559, 1566, 1574, 1580, 1592], '#ffb04d');
   }
+
+  if (page === 'telemetry') {
+    const times = ['12:40:00', '12:40:10', '12:40:20', '12:40:30', '12:40:40', '12:40:50', '12:41:00'];
+    const activeMach = telemetryMachines.find((m) => m.id === (state.selectedTelemetryMachine || 'HYD-03')) || telemetryMachines[2];
+    
+    let vibeData = [2.1, 2.3, 2.8, 3.6, 5.2, 7.1, 8.42];
+    let tempData = [58.2, 59.4, 60.1, 61.5, 62.8, 63.5, 64.1];
+    if (activeMach.id === 'CNC-01') {
+      vibeData = [1.6, 1.7, 1.8, 1.75, 1.82, 1.8, 1.82];
+      tempData = [45.1, 45.8, 46.5, 47.0, 47.5, 48.0, 48.2];
+    } else if (activeMach.id === 'INJ-02') {
+      vibeData = [3.2, 3.5, 3.8, 4.1, 4.4, 4.7, 4.88];
+      tempData = [66.0, 67.5, 69.1, 70.4, 71.8, 72.9, 73.8];
+    }
+
+    createLineChart('telemetryVibrationChart', times, vibeData, activeMach.vibe >= 7.1 ? '#ff6b8a' : '#ffb04d');
+    createLineChart('telemetryTemperatureChart', times, tempData, activeMach.temp >= 70 ? '#ffb04d' : '#57d7ff');
+  }
 }
 
 function hydrateInteractions() {
@@ -1766,6 +1939,39 @@ function hydrateInteractions() {
     if (!Number.isNaN(raw) && raw !== 0) animateCounter(counter, raw);
   });
 
+  document.querySelectorAll('.telemetry-machine-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.selectedTelemetryMachine = btn.dataset.telemetryMachine;
+      renderApp();
+    });
+  });
+
+  document.querySelectorAll('.telemetry-fault-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const fault = btn.dataset.fault;
+      if (fault === 'vibe') {
+        const hyd = telemetryMachines.find((m) => m.id === 'HYD-03');
+        if (hyd) { hyd.vibe = 8.85; hyd.zone = 'Zone D (Critical Spike)'; }
+        state.selectedTelemetryMachine = 'HYD-03';
+        showNotification('Vibration Fault Injected', 'HYD-03 vibration velocity spiked to 8.85 mm/s (Breached ISO 10816 Zone D).');
+        renderApp();
+      } else if (fault === 'temp') {
+        const inj = telemetryMachines.find((m) => m.id === 'INJ-02');
+        if (inj) { inj.temp = 82.4; }
+        state.selectedTelemetryMachine = 'INJ-02';
+        showNotification('Thermal Surge Injected', 'INJ-02 cylinder temperature jumped to 82.4°C (Chiller coolant alert).');
+        renderApp();
+      } else if (fault === 'reset') {
+        const hyd = telemetryMachines.find((m) => m.id === 'HYD-03');
+        if (hyd) { hyd.vibe = 2.4; hyd.zone = 'Zone B (Normal)'; }
+        const inj = telemetryMachines.find((m) => m.id === 'INJ-02');
+        if (inj) { inj.temp = 54.0; }
+        showNotification('Baseline Restored', 'All machine telemetry channels stabilized to nominal ISO 10816 baseline.');
+        renderApp();
+      }
+    });
+  });
+
   renderSearchResults(state.searchQuery);
   initCharts(state.page);
   lucide?.createIcons?.();
@@ -1781,6 +1987,7 @@ function renderApp(afterRender) {
       copilot: renderCopilotPage,
       twin: renderDigitalTwinPage,
       machines: renderMachinesPage,
+      telemetry: renderTelemetryPage,
       production: renderProductionPage,
       maintenance: renderMaintenancePage,
       quality: renderQualityPage,
